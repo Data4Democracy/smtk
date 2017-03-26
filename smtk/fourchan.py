@@ -8,10 +8,10 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
-class ChanMonitor():
+class ChanMonitor:
     """Monitors 4chan board by continuously polling API
 
-    Overwrite on_status and on_archive to handle thread updates
+    Override on_status and on_archive to handle thread updates
 
     Arguments:
         board: string 4chan board to monitor. Ex `pol`
