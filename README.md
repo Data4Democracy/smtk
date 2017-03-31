@@ -1,5 +1,8 @@
 ## SMTK (Social Media Tool Kit)
 
+#### **DISCLAIMER:**
+This is a work in progress experiment. Contributions, ideas, thoughts, opinions are welcome. If you are looking for a fully fleshed out, well documented codebase you may be uncomfortable working on this project (for now). The upside is there is a lot of work to be done and this is a great opportunity to make substantial contributions.
+
 ## Purpose:
 Collecting social media data can be a nuisance. This project aims to make the collection process as simple as possible for researchers. We make common-sense assumptions about what most researchers need, and how they like to work with their data. SMTK sits on top of other python libraries such as facepy (facebook) and python-twitter (twitter) to provide researchers with a clear and easy way to interact with various social media API's. Our purpose is to take care of low level details and provide a clean API for working across multiple platforms.
 
