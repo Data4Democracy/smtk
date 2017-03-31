@@ -15,7 +15,7 @@ def test_chan_monitor_defaults():
     assert chan.board.name == 'test'
     assert chan.sleep_per_loop == 0
     assert chan.sleep_per_request == 1
-    assert chan.stop_timer == datetime.timedelta(0,300)
+    assert chan.stop_timer == datetime.timedelta(0, 300)
 
 
 def test_chan_monitor_pass_args():
@@ -24,7 +24,7 @@ def test_chan_monitor_pass_args():
         sleep_per_loop=60,
         sleep_per_request=11,
         stop_timer=10
-        )
+    )
 
     assert chan.board.name == 'param_test'
     assert chan.sleep_per_loop == 60

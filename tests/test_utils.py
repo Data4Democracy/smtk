@@ -1,11 +1,11 @@
 import pytest
-from unittest.mock import MagicMock
 from smtk.utils import helpers
-from smtk import twitter
+
 
 @pytest.fixture
 def credentials():
     return ['p_consumer', 'pc_secret', 'p_access', 'pa_secret']
+
 
 def test_twitter_auth_from_env_vars(monkeypatch):
     monkeypatch.setenv('T_CONSUMER_KEY', 'consumer')
@@ -21,11 +21,12 @@ def test_twitter_auth_from_env_vars(monkeypatch):
 
 
 def test_twitter_auth_from_parameters():
-    auth = helpers.twitter_auth('p_consumer', 'pc_secret', 'p_access', 'pa_secret')
+    auth = helpers.twitter_auth(
+        'p_consumer', 'pc_secret', 'p_access', 'pa_secret')
 
     assert len(auth) == 4
-    for credential in auth:
-        assert credential in ['p_consumer', 'pc_secret', 'p_access', 'pa_secret']
+    for cred in auth:
+        assert cred in ['p_consumer', 'pc_secret', 'p_access', 'pa_secret']
 
 
 def test_twitter_auth_invalid_parameters(monkeypatch):

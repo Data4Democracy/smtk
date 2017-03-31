@@ -2,7 +2,7 @@ import facepy
 
 
 class CollectFacebook():
-    """Sets up a face collection. 
+    """Sets up a facebook collection.
 
     Inherit from on_comment, on_post, on_profile, on_reaction, on_start
     to handle stream of data returned by a running collection.
@@ -39,18 +39,21 @@ class CollectFacebook():
         # accepts list of post IDs
         # calls on_comment for each comment returned
         # param options: max comments per post
-        # see https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_comments.py
+        # see
+        # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_comments.py
         pass
 
     def get_posts(self):
         # accepts list of page IDs
         # calls on_post for each post returned
         # param options: max post IDs to return
-        # see https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_posts.py
+        # see
+        # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_posts.py
         pass
 
     def get_reactions(self):
         # accept list of post IDs
         # calls on_reaction for each post ID
-        # see https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_reactions.py
+        # see
+        # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_reactions.py
         pass

@@ -2,6 +2,7 @@ import os
 
 
 def twitter_auth(consumer_key=None, consumer_secret=None, access_key=None, access_secret=None):
+    """Validate and create a list of twitter authentication elements"""
 
     if not consumer_key:
         consumer_key = os.environ.get('T_CONSUMER_KEY', consumer_key)

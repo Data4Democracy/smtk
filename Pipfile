@@ -9,3 +9,5 @@ coverage = "*"
 [packages]
 python-twitter = "*"
 pytest-cov = "*"
+dataset = "*"
+autopep8 = "*"

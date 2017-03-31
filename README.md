@@ -10,16 +10,16 @@ Our goal is to make it as **easy as possible** for researchers to get up and run
 This project aims to use the most current version of python 3.6. Back porting to previous versions is a secondary concern and not guaranteed.
 
 ## Background:
-SMTK grew out research projects being done at [Data for Democracy](https://github.com/Data4Democracy). Some early inspiration came from [collect-social](https://github.com/Data4Democracy/collect-social), [discursive](https://github.com/Data4Democracy/discursive) and [twitter-framework](https://github.com/bstarling/twitter-framework). Thanks to all the early contributors to these projects, much of the code and functionality found here was directly inspired by lessons learned during previous work.
+SMTK grew out online community research we are doing at [Data for Democracy](https://github.com/Data4Democracy). Some early inspiration came from [collect-social](https://github.com/Data4Democracy/collect-social), [discursive](https://github.com/Data4Democracy/discursive) and [twitter-framework](https://github.com/bstarling/twitter-framework). Thanks to all the early contributors to these projects, much of the code and functionality found here was directly inspired these early projects.
 
 ## Roadmap:
 * Twitter
 * Facebook
 * Disqus
 * Youtube
-* Command line interface
-* Create a sane default setup/configuration to save data using the `on_*` events.
+* Create ready to go setup/configuration
 
+Interesting in contributing? Please join us in #assemble and checkout our [contributors guide](./CONTRIBUTING.md) and join us in our slack channel [#assemble](https://datafordemocracy.slack.com/messages/assemble/)
 
 #### Using 4chan API
 
