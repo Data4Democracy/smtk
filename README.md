@@ -1,7 +1,7 @@
 ## SMTK (Social Media Tool Kit)
 
 #### **DISCLAIMER:**
-This is a work in progress experiment. Contributions, ideas, thoughts, opinions are welcome. If you are looking for a fully fleshed out, well documented codebase you may be uncomfortable working on this project (for now). The upside is there is a lot of work to be done and this is a great opportunity to make substantial contributions.
+This is a very early stage work in progress experiment. Contributions, ideas, thoughts, opinions are welcome. If you are looking for a fully fleshed out, well documented codebase you may be uncomfortable working on this project (for now). The upside is there is a lot of work to be done and this is a great opportunity to make substantial contributions.
 
 ## Purpose:
 Collecting social media data can be a nuisance. This project aims to make the collection process as simple as possible for researchers. We make common-sense assumptions about what most researchers need, and how they like to work with their data. SMTK sits on top of other python libraries such as facepy (facebook) and python-twitter (twitter) to provide researchers with a clear and easy way to interact with various social media API's. Our purpose is to take care of low level details and provide a clean API for working across multiple platforms.
@@ -27,6 +27,8 @@ Interesting in contributing? Please join us in #assemble and checkout our [contr
 #### Using 4chan API
 
 ```python
+from smtk.fourchan import ChanMonitor
+
 board = 'pol'
 chan = ChanMonitor(board)
 chan.follow() # loops continuously looking for thread updates
@@ -38,9 +40,8 @@ ChanMonitor provides three methods you can override to code specific logic for e
 * `on_loop_complete` : called each time poll of all active threads is complete
 * `on_start`: called once at startup
 
-In order to actually do something with the thread updates inherit from `ChanMonitor`
-and override above methods
-
+In order to actually do something with the updates inherit from `ChanMonitor`
+and override above methods.
 ```python
 class DemoChan(ChanMonitor):
   def on_start(self):
@@ -52,3 +53,5 @@ class DemoChan(ChanMonitor):
   def on_archive(self, thread):
     print("Thread is no longer active")
 ```
+
+[Here](https://github.com/bstarling/fourchan_monitor) is an example of the chan monitor feeding our [Eventador](https://github.com/bstarling/assemble/tree/master/eventador) hosted kafka cluster .
