@@ -35,4 +35,23 @@ def setup_sqlite(db_url, collection):
         connections.create_index(['friend_id'])
         connections.create_index(['follower_id'])
 
+    elif collection == 'facebook':
+        db = dataset.connect(db_url)
+
+        pages = db['page']
+        users = db['user']
+        posts = db['post']
+        comments = db['comment']
+        reactions = db['reaction']
+
+        pages.create_index(['page_id'])
+        users.create_index(['user_id'])
+        posts.create_index(['post_id'])
+        comments.create_index(['comment_id'])
+        comments.create_index(['post_id'])
+        reactions.create_index(['comment_id'])
+        reactions.create_index(['post_id'])
+        reactions.create_index(['user_id'])
+
+
     return db
