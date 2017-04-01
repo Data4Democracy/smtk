@@ -1,4 +1,5 @@
 import os
+import facepy
 
 
 def twitter_auth(consumer_key=None, consumer_secret=None, access_key=None, access_secret=None):
@@ -24,3 +25,26 @@ def twitter_auth(consumer_key=None, consumer_secret=None, access_key=None, acces
             return None
 
     return auth
+
+
+def facebook_auth(app_id=None, app_secret=None):
+    """Validate and create facebook access token"""
+
+    if not app_id:
+        app_id = os.environ.get('FB_APP_ID', app_id)
+    if not app_secret:
+        app_secret = os.environ.get('FB_APP_SECRET', app_secret)
+
+    auth = [app_id, app_secret]
+
+    for credential in auth:
+        if not isinstance(credential, str):
+            print('credential must be string')
+            return None
+        if len(credential) <= 0:
+            print('invalid credential {}'.format(credential))
+            return None
+
+    auth_token = facepy.utils.get_application_access_token(*auth)
+
+    return auth_token

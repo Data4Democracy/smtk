@@ -10,7 +10,8 @@ class CollectFacebook():
 
     def __init__(self, *auth):
         # TODO authentication
-        self.auth = ''
+        self.auth = helpers.facebook_auth()
+        self.graph = facepy.GraphAPI(*self.auth)
 
     def on_comment(self):
         """Called when comment is found"""
