@@ -1,5 +1,5 @@
 import facepy
-
+from smtk.utils import helpers
 
 class CollectFacebook():
     """Sets up a facebook collection.
@@ -10,7 +10,7 @@ class CollectFacebook():
 
     def __init__(self, *auth):
         # TODO authentication
-        self.auth = helpers.facebook_auth()
+        self.auth = helpers.facebook_auth(*auth)
         self.graph = facepy.GraphAPI(*self.auth)
 
     def on_comment(self):
@@ -44,13 +44,30 @@ class CollectFacebook():
         # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_comments.py
         pass
 
-    def get_posts(self):
-        # accepts list of page IDs
-        # calls on_post for each post returned
-        # param options: max post IDs to return
-        # see
-        # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_posts.py
-        pass
+    def get_posts(self, db=None, page_id=None, max_posts=None, date_range=None): 
+        """
+        :param page_id: the Facebook page id from which posts should be downloaded.
+        :param max_posts: the maximum number of posts that should be downloaded. Works backwards in time: the newest X number of posts will be returned.
+        :param date_range: accepts a tuple of dates. Only posts published between these dates will be downloaded.
+
+        Calls `on_post` for each post returned.
+        """
+        kwargs = {
+            'path': '/' + str(page_id) + '/posts',
+            'limit': max_posts,
+            'page': True
+        }
+
+        post_data_pages = self.graph.get(**kwargs)
+
+        return post_data_pages
+
+        # for post_data in post_data_pages:
+        #     posts_data = post_data['data']
+
+        #     for post in posts_data:
+        #         print(post)
+        #pass
 
     def get_reactions(self):
         # accept list of post IDs
