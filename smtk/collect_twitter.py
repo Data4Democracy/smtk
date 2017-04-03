@@ -1,15 +1,12 @@
 import twitter
+
+import smtk.utils.logger as l
 from smtk.utils import helpers
-import logging
 
 # twitter.py conflicts with python-twitter library
 # TODO thoughts: naming get_* vs gather_* vs collect_*
 # TODO thoughts: get_x_by_screen_name / get_x_by_ids repetitive, support
 # both? handle another way?
-
-logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
 
 
 class CollectTwitter:
@@ -25,12 +22,12 @@ class CollectTwitter:
 
     def on_tweet(self, tweet):
         """ Called when tweet is found"""
-        # logger.info("TWEET FOUND: {}".format(tweet.text))
+        # l.INFO("TWEET FOUND: {}".format(tweet.text))
         pass
 
     def on_profile(self, profile):
         """Called when profile is found"""
-        logger.info("{}".format(profile))
+        l.INFO(profile)
 
     def on_start(self):
         """Called when collection is started
@@ -39,7 +36,7 @@ class CollectTwitter:
 
     def on_connection(self, account, connection, type_):
         """Called when connection is found"""
-        # logger.info("{} found {} with {}".format(type_, account, connection))
+        # l.INFO("{} found {} with {}".format(type_, account, connection))
         pass
 
     def get_friends(self, ids=None, screen_names=None, request_limit=3):
@@ -75,18 +72,18 @@ class CollectTwitter:
                 # limit 100 profiles per request
                 chunk = self._fetch_users_by_id(ids=lookup, stream=stream)
                 remain -= len(lookup)
-                logger.info(
-                    "Fetching {} profiles. {} remain".format(lookup, remain))
+                l.INFO("""
+                       Fetching {lookup} profiles. {remain} remain
+                       """.format(lookup, remain))
                 profiles += chunk
         profiles += self._fetch_users_by_id(ids=lookup, stream=stream)
-        logger.info("Fetching remaining {} profile(s)".format(len(lookup)))
+        l.INFO("Fetching remaining %s profile(s)" %(len(lookup)))
 
         return profiles
 
     def get_tweets(self, ids=None, screen_names=None, limit=3200):
         if ids and screen_names:
-            raise ValueError(
-                "Must provide list of IDs or screen_names not both")
+            raise ValueError("Must provide list of IDs or screen_names not both")
         elif ids:
             for id_ in ids:
                 self._stream_tweets_by_user_id(id_, limit=limit)
@@ -118,26 +115,26 @@ class CollectTwitter:
         # TODO consider breaking up/refactoring
         while True:
             try:
-                logger.info("Fetching 200 tweets {}".format(kwargs))
+                l.INFO("Fetching 200 tweets %s" %(kwargs))
                 tweets = self.api.GetUserTimeline(**kwargs)
 
             except Exception as e:
-                logger.warning("{} kwargs {}".format(e, kwargs))
+                l.WARN("%s kwargs %s" %(e, kwargs))
                 return None
 
-            logger.info("Streaming tweets")
+            l.INFO("Streaming tweets")
             for tweet in tweets:
                 self.on_tweet(tweet)
 
             if len(tweets) < 200:
                 # TODO Fix - Using <200 as proxy for end of user timeline
-                logger.info("Stream ended < 200 tweets")
+                l.INFO("Stream ended < 200 tweets")
                 break
 
             tweet_ids = [tweet.id for tweet in tweets]
             if len(tweet_ids) > 0:
                 # Next request start at oldest tweet in current request
-                logger.info("Setting max ID: {}".format(min(tweet_ids)))
+                l.INFO("Setting max ID: {}".format(min(tweet_ids)))
                 kwargs['max_id'] = min(tweet_ids)
 
     def _stream_tweets_by_screen_name(self, screen_name):
@@ -151,10 +148,9 @@ class CollectTwitter:
             total_count=request_limit * 5000
         )
 
-        logger.info("Getting friends {}".format(kwargs))
+        l.INFO("Getting friends %s" %(kwargs))
         friends = self.api.GetFriendIDs(**kwargs)
-        logger.info(
-            "Streaming connections {} friends found".format(len(friends)))
+        l.INFO("Streaming connections %s friends found" %(len(friends)))
         for friend in friends:
             self.on_connection(user_id, friend, type_=friend)
         return friends
@@ -170,10 +166,9 @@ class CollectTwitter:
             total_count=request_limit * 5000
         )
 
-        logger.info("Getting friends {}".format(kwargs))
+        l.INFO("Getting friends %s" %(kwargs))
         followers = self.api.GetFollowerIDs(**kwargs)
-        logger.info(
-            "Streaming connections {} followers found".format(len(followers)))
+        l.INFO("Streaming connections %s followers found" %(len(followers)))
         for follower in followers:
             self.on_connection(user_id, follower, type_=follower)
         return followers

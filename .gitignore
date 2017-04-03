@@ -97,6 +97,9 @@ test.json
 # Mac OS X files
 .DS_Store
 
+# SQLite
+db.sqlite
+
 data/*
 
 .idea/

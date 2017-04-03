@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "cb65967bdf3a7372749ce6144be4ee63f412aeeac624342fda3a2b58b1c43c15"
+            "sha256": "bc9145a5bed75a18ac4d6045dc79a1ae254421c4e54ebba411e74eb6a26eabf7"
         },
         "requires": {},
         "sources": [
@@ -11,6 +11,18 @@
             }
         ]
     },
-    "default": {},
-    "develop": {}
+    "default": {
+        "BASC-py4chan": "*",
+        "autopep8": "*",
+        "better_exceptions": "*",
+        "coloredlogs": "*",
+        "dataset": "*",
+        "facepy": "*",
+        "pytest-cov": "*",
+        "python-twitter": "*"
+    },
+    "develop": {
+        "coverage": "*",
+        "pytest": "*"
+    }
 }

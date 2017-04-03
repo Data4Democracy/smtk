@@ -1,11 +1,9 @@
-import basc_py4chan
 import time
-import logging
 import datetime as datetime
 
-logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s')
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+import basc_py4chan
+
+import smtk.utils.logger as l
 
 
 class ChanMonitor:
@@ -54,16 +52,16 @@ class ChanMonitor:
         update = thread.update()
 
         if update:
-            logger.info("{} has {} new updates".format(thread.id, update))
+            l.INFO("{} has {} new updates".format(thread.id, update))
             self.on_update(thread)
         else:
-            logger.info("{} no updates".format(thread.id))
+            l.INFO("{} no updates".format(thread.id))
 
         if thread.archived:
             self.thread_cache.remove(thread)
             self.on_archive(thread)
 
-            logger.info("{} has been archived".format(thread.id))
+            l.INFO("{} has been archived".format(thread.id))
 
     def _fetch_one(self, thread_id):
         """
@@ -73,7 +71,7 @@ class ChanMonitor:
         """
         time.sleep(self.sleep_per_request)
         thread = self.board.get_thread(thread_id)
-        logger.info("Fetching thread ID {}".format(thread_id))
+        l.INFO("Fetching thread ID {}".format(thread_id))
         return thread
 
     def _fetch_new(self, active_threads):
@@ -87,16 +85,16 @@ class ChanMonitor:
         for thread in active_threads:
             if thread not in active_thread_ids:
                 self.thread_cache.append(self._fetch_one(thread))
-                logger.info("{} added to thread cache".format(thread))
+                l.INFO("{} added to thread cache".format(thread))
                 processed += 1
-        logger.info("Processed {} new threads".format(processed))
+        l.INFO("Processed {} new threads".format(processed))
         return processed
 
     def update(self):
         """Cycle through thread_cache polling for updates"""
         for thread in self.thread_cache:
             self._poll_thread(thread)
-        logger.info("Active threads {}".format(len(self.thread_cache)))
+        l.INFO("Active threads {}".format(len(self.thread_cache)))
 
     def follow(self):
         """
@@ -106,25 +104,25 @@ class ChanMonitor:
         """
         self.start = datetime.datetime.utcnow()
         self.thread_cache = self.board.get_all_threads()
-        logger.info("Thread cache initialized {} active threads".format(
+        l.INFO("Thread cache initialized {} active threads".format(
             len(self.thread_cache)))
-        logger.info("Running for {} minutes".format(self.stop_timer))
+        l.INFO("Running for {} minutes".format(self.stop_timer))
         active_threads = self.board.get_all_thread_ids()
 
         while not self._time_expired() and self.stop_timer:
             self.loop_start = datetime.datetime.utcnow()
             self._fetch_new(active_threads)
             self.update()
-            logger.info("Thread cache loop complete time elapsed: {}".format(
+            l.INFO("Thread cache loop complete time elapsed: {}".format(
                 datetime.datetime.utcnow() - self.loop_start))
 
             time.sleep(self.sleep_per_loop)
-            logging.info("Sleeping {} seconds before restart".format(
+            l.INFO("Sleeping {} seconds before restart".format(
                 self.sleep_per_loop))
 
         end = datetime.datetime.utcnow()
         elapsed = end - self.start
-        logger.info("Stopping /{} collection".format(self.board.name.upper()))
-        logger.info("Time Elapsed {}".format(elapsed))
+        l.INFO("Stopping /{} collection".format(self.board.name.upper()))
+        l.INFO("Time Elapsed {}".format(elapsed))
 
         return

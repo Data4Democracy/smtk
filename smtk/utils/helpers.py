@@ -18,11 +18,9 @@ def twitter_auth(consumer_key=None, consumer_secret=None, access_key=None, acces
 
     for credential in auth:
         if not isinstance(credential, str):
-            print('credential must be string')
-            return None
+            raise RuntimeError("credential must be string, got: %s" %(type(credential)))
         if len(credential) <= 0:
-            print('invalid credential {}'.format(credential))
-            return None
+            raise RuntimeError('invalid credential %s' %(credential))
 
     return auth
 
@@ -39,11 +37,9 @@ def facebook_auth(app_id=None, app_secret=None):
 
     for credential in auth:
         if not isinstance(credential, str):
-            print('credential must be string')
-            return None
+            raise RuntimeError("credential must be string, got: %s" %(type(credential)))
         if len(credential) <= 0:
-            print('invalid credential {}'.format(credential))
-            return None
+            raise RuntimeError('invalid credential %s' %(credential))
 
     auth_token = facepy.utils.get_application_access_token(*auth)
 
