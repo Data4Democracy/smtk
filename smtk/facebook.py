@@ -1,6 +1,7 @@
 import facepy
 from smtk.utils import helpers
 
+
 class CollectFacebook():
     """Sets up a facebook collection.
 
@@ -8,10 +9,10 @@ class CollectFacebook():
     to handle stream of data returned by a running collection.
     """
 
-    def __init__(self, *auth):
+    def __init__(self, auth=None):
         # TODO authentication
-        self.auth = helpers.facebook_auth(*auth)
-        self.graph = facepy.GraphAPI(*self.auth)
+        self.auth = helpers.facebook_auth(auth=auth)
+        self.graph = facepy.GraphAPI(self.auth)
 
     def on_comment(self):
         """Called when comment is found"""
@@ -44,7 +45,8 @@ class CollectFacebook():
         # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_comments.py
         pass
 
-    def get_posts(self, db=None, page_id=None, max_posts=None, date_range=None): 
+
+    def get_posts(self, db=None, page_id=None, max_posts=None, date_range=None):
         """
         :param page_id: the Facebook page id from which posts should be downloaded.
         :param max_posts: the maximum number of posts that should be downloaded. Works backwards in time: the newest X number of posts will be returned.

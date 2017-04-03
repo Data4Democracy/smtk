@@ -9,11 +9,10 @@ def validate_auth_elements(auth):
 
     for credential in auth:
         if not isinstance(credential, str):
-            print('credential must be string')
-            return None
+            raise RuntimeError(
+                "credential must be string, got: %s" % (type(credential)))
         if len(credential) <= 0:
-            print('invalid credential {}'.format(credential))
-            return None
+            raise RuntimeError('invalid credential %s' % (credential))
 
     return auth
 
@@ -37,19 +36,22 @@ def twitter_auth(consumer_key=None, consumer_secret=None, access_key=None, acces
         return auth
 
 
-def facebook_auth(app_id=None, app_secret=None, api_version=None):
+def facebook_auth(auth):
     """Validate and create facebook access token"""
+    if auth:
+        app_id, app_secret, api_version = auth
+    else:
+        app_id, app_secret, api_version = None, None, '2.6'
 
-    if not app_id:
-        app_id = os.environ.get('FB_APP_ID', app_id)
-    if not app_secret:
-        app_secret = os.environ.get('FB_APP_SECRET', app_secret)
-    if not api_version:
-        api_version = os.environ.get('FB_API_VERSION', api_version)
+    app_id = os.getenv('FB_APP_ID', app_id)
+    app_secret = os.getenv('FB_APP_SECRET', app_secret)
+    api_version = os.getenv('FB_API_VERSION', api_version)
 
     auth = [app_id, app_secret, api_version]
 
     if validate_auth_elements(auth):
-        auth_token = facepy.utils.get_application_access_token(*auth)
+        auth_token = facepy.utils.get_application_access_token(
+            app_id, app_secret, api_version=api_version)
+        print(auth_token)
 
-        return (auth_token[0], api_version)
+        return (auth_token)

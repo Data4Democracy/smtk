@@ -1,19 +1,20 @@
 from smtk.collect_twitter import CollectTwitter
 from smtk.utils.backend import DataStore
 
+import smtk.utils.logger as l
 
 class BaseCollector(CollectTwitter):
     def on_tweet(self, tweet):
+        l.INFO(tweet.text.encode('utf-8'))
         # db.send(tweet)
-        pass
 
     def on_start(self):
         # setup DB
         pass
 
-    def on_profile(self):
+    def on_profile(self, profile):
         # db.send(profile)
-        pass
+        print profile
 
     def on_connection(self):
         # db.send(connection)
@@ -25,11 +26,26 @@ class BaseCollector(CollectTwitter):
         # friends/connections/tweets
         pass
 
+class StdioTweetLogger(CollectTwitter):
+    def on_tweet(self, tweet):
+        l.INFO("TWEET: %s" %(tweet.text.encode('utf-8')))
+
+    def on_start(self):
+        pass
+
+    def on_profile(self, profile):
+        l.INFO("PROFILE: %s"%(profile))
+
+    def on_connection(self):
+        pass
 
 datastore = DataStore()
 
 # create a db
 db = datastore.setup(resource="sqlite:///db.sqlite", collection="twitter")
-
 collect = BaseCollector(CollectTwitter)
-collect.explore_network(['expample_user'])
+
+
+tweet_logger = StdioTweetLogger()
+tweet_logger.get_tweets(screen_names=['POTUS', 'data4democracy'])
+

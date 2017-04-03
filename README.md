@@ -18,6 +18,7 @@ SMTK grew out online community research we are doing at [Data for Democracy](htt
 ## Roadmap:
 * Twitter
 * Facebook
+* Reddit
 * Disqus
 * Youtube
 * Create ready to go setup/configuration
