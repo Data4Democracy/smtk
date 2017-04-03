@@ -41,7 +41,7 @@ class CollectTwitter:
 
     def get_friends(self, ids=None, screen_names=None, request_limit=3):
         """In context of twitter friends are accounts the source is following"""
-        # see https://github.com/Data4Democracy/collect-social/blob/master/collect_social/twitter/get_friends.py
+        # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/twitter/get_friends.py
         if ids is None:
             ids = []
 
@@ -59,10 +59,8 @@ class CollectTwitter:
         if not screen_names is None:
             ids += self._screen_names_to_ids(screen_names)
 
-
         for id_ in ids:
             self._stream_followers_by_id(id_, request_limit=3)
-
 
     def get_profiles(self, ids=None, stream=True):
         # TODO profiles by screen_name
@@ -82,7 +80,7 @@ class CollectTwitter:
                        """.format(lookup, remain))
                 profiles += chunk
         profiles += self._fetch_users_by_id(ids=lookup, stream=stream)
-        l.INFO("Fetching remaining %s profile(s)" %(len(lookup)))
+        l.INFO("Fetching remaining %s profile(s)" % (len(lookup)))
 
         return profiles
 
@@ -93,17 +91,16 @@ class CollectTwitter:
         if not screen_names is None:
             ids += self._screen_names_to_ids(screen_names)
 
-        l.INFO("Getting tweets for ids: %s" %(ids))
+        l.INFO("Getting tweets for ids: %s" % (ids))
         for id_ in ids:
             self._stream_tweets_by_user_id(id_, limit=limit)
 
-
     def _fetch_users_by_id(self, ids=None, stream=True):
         if len(ids) > 100:
-            raise RuntimeError("Too many users to fetch, got: %s" %(len(ids)))
+            raise RuntimeError("Too many users to fetch, got: %s" % (len(ids)))
 
-        profiles= self.api.UsersLookup(user_id=ids,
-                                       include_entities=False)
+        profiles = self.api.UsersLookup(user_id=ids,
+                                        include_entities=False)
         if stream:
             for profile in profiles:
                 self.on_profile(profile)
@@ -137,11 +134,11 @@ class CollectTwitter:
         # TODO consider breaking up/refactoring
         while True:
             try:
-                l.INFO("Fetching 200 tweets %s" %(kwargs))
+                l.INFO("Fetching 200 tweets %s" % (kwargs))
                 tweets = self.api.GetUserTimeline(**kwargs)
 
             except Exception as e:
-                l.WARN("%s kwargs %s" %(e, kwargs))
+                l.WARN("%s kwargs %s" % (e, kwargs))
                 return None
 
             l.INFO("Streaming tweets")
@@ -170,9 +167,9 @@ class CollectTwitter:
             total_count=request_limit * 5000
         )
 
-        l.INFO("Getting friends %s" %(kwargs))
+        l.INFO("Getting friends %s" % (kwargs))
         friends = self.api.GetFriendIDs(**kwargs)
-        l.INFO("Streaming connections %s friends found" %(len(friends)))
+        l.INFO("Streaming connections %s friends found" % (len(friends)))
         for friend in friends:
             self.on_connection(user_id, friend, type_=friend)
         return friends
@@ -184,9 +181,9 @@ class CollectTwitter:
             total_count=request_limit * 5000
         )
 
-        l.INFO("Getting friends %s" %(kwargs))
+        l.INFO("Getting friends %s" % (kwargs))
         friends = self.api.GetFriendIDs(**kwargs)
-        l.INFO("Streaming connections %s friends found" %(len(friends)))
+        l.INFO("Streaming connections %s friends found" % (len(friends)))
         for friend in friends:
             self.on_connection(user_id, friend, type_=friend)
         return friends
@@ -198,9 +195,9 @@ class CollectTwitter:
             total_count=request_limit * 5000
         )
 
-        l.INFO("Getting friends %s" %(kwargs))
+        l.INFO("Getting friends %s" % (kwargs))
         followers = self.api.GetFollowerIDs(**kwargs)
-        l.INFO("Streaming connections %s followers found" %(len(followers)))
+        l.INFO("Streaming connections %s followers found" % (len(followers)))
         for follower in followers:
             self.on_connection(user_id, follower, type_=follower)
         return followers

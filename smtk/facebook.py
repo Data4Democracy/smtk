@@ -2,6 +2,7 @@ import facepy
 
 from smtk.utils import helpers
 
+
 class CollectFacebook():
     """Sets up a facebook collection.
 
