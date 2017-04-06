@@ -1,7 +1,6 @@
 import pytest
+import os
 from smtk.utils import helpers
-from smtk.utils.api_keys import FB_APP_ID, FB_APP_SECRET, FB_API_VERSION
-
 
 @pytest.fixture
 def credentials():
@@ -47,19 +46,15 @@ def test_twitter_auth_invalid_type_parameters():
     assert auth is None
 
 def test_facebook_auth_from_env_vars(monkeypatch):
-    monkeypatch.setenv('FB_APP_ID', FB_APP_ID)
-    monkeypatch.setenv('FB_APP_SECRET', FB_APP_SECRET)
-    monkeypatch.setenv('FB_API_VERSION', FB_API_VERSION)
-
     auth = helpers.facebook_auth()
 
     assert len(auth) == 2
-    assert FB_APP_ID in auth[0]
-    assert auth[1] == FB_API_VERSION
+    assert os.environ['FB_APP_ID'] in auth[0]
 
 def test_facebook_auth_from_param_list():
-    auth = helpers.facebook_auth(*[FB_APP_ID,FB_APP_SECRET,FB_API_VERSION])
+    FB_APP_ID = os.environ['FB_APP_ID']
+    FB_APP_SECRET = os.environ['FB_APP_SECRET']
+    auth = helpers.facebook_auth(auth=[FB_APP_ID,FB_APP_SECRET])
 
     assert len(auth) == 2
     assert FB_APP_ID in auth[0]
-    assert auth[1] == FB_API_VERSION

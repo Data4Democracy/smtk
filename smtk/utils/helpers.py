@@ -36,22 +36,21 @@ def twitter_auth(consumer_key=None, consumer_secret=None, access_key=None, acces
         return auth
 
 
-def facebook_auth(auth):
+def facebook_auth(auth=None):
     """Validate and create facebook access token"""
     if auth:
-        app_id, app_secret, api_version = auth
+        app_id, app_secret = auth
     else:
-        app_id, app_secret, api_version = None, None, '2.6'
+        app_id, app_secret = None, None
 
     app_id = os.getenv('FB_APP_ID', app_id)
     app_secret = os.getenv('FB_APP_SECRET', app_secret)
-    api_version = os.getenv('FB_API_VERSION', api_version)
 
-    auth = [app_id, app_secret, api_version]
+    auth = [app_id, app_secret]
 
     if validate_auth_elements(auth):
         auth_token = facepy.utils.get_application_access_token(
-            app_id, app_secret, api_version=api_version)
+            app_id, app_secret)
         print(auth_token)
 
         return (auth_token)
