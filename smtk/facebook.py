@@ -1,6 +1,8 @@
 import facepy
 from smtk.utils import helpers
 
+from smtk.utils import helpers
+
 
 class CollectFacebook():
     """Sets up a facebook collection.
@@ -45,7 +47,6 @@ class CollectFacebook():
         # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/facebook/get_comments.py
         pass
 
-
     def get_posts(self, db=None, page_id=None, max_posts=None, date_range=None):
         """
         :param page_id: the Facebook page id from which posts should be downloaded.
@@ -69,7 +70,7 @@ class CollectFacebook():
 
         #     for post in posts_data:
         #         print(post)
-        #pass
+        # pass
 
     def get_reactions(self):
         # accept list of post IDs

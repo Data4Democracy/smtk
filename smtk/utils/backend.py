@@ -53,5 +53,4 @@ def setup_sqlite(db_url, collection):
         reactions.create_index(['post_id'])
         reactions.create_index(['user_id'])
 
-
     return db
