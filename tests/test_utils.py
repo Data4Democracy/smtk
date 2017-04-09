@@ -34,13 +34,22 @@ def test_twitter_auth_invalid_parameters(monkeypatch):
     monkeypatch.setenv('T_CONSUMER_SECRET', '')
     monkeypatch.setenv('T_ACCESS_KEY', '')
     monkeypatch.setenv('T_ACCESS_SECRET', '')
-
-    auth = helpers.twitter_auth()
-
-    assert auth is None
+    with pytest.raises(TypeError):
+        helpers.twitter_auth()
 
 
 def test_twitter_auth_invalid_type_parameters():
-    auth = helpers.twitter_auth(10, 20, 30, 40)
+    with pytest.raises(TypeError):
+        helpers.twitter_auth(10, 20, 30, 40)
 
-    assert auth is None
+
+def test_reddit_auth_invalid_type_parameters():
+    with pytest.raises(TypeError):
+        helpers.reddit_auth(10, 20)
+
+
+def test_reddit_auth_invalid_parameters(monkeypatch):
+    monkeypatch.setenv('R_CLIENT_ID', '')
+    monkeypatch.setenv('R_CLIENT_SECRET', '')
+    with pytest.raises(TypeError):
+        helpers.reddit_auth(10, 20)

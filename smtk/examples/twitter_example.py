@@ -3,6 +3,7 @@ from smtk.utils.backend import DataStore
 
 import smtk.utils.logger as l
 
+
 class BaseCollector(CollectTwitter):
     def on_tweet(self, tweet):
         l.INFO(tweet.text.encode('utf-8'))
@@ -26,18 +27,20 @@ class BaseCollector(CollectTwitter):
         # friends/connections/tweets
         pass
 
+
 class StdioTweetLogger(CollectTwitter):
     def on_tweet(self, tweet):
-        l.INFO("TWEET: %s" %(tweet.text.encode('utf-8')))
+        l.INFO("TWEET: %s" % (tweet.text.encode('utf-8')))
 
     def on_start(self):
         pass
 
     def on_profile(self, profile):
-        l.INFO("PROFILE: %s"%(profile))
+        l.INFO("PROFILE: %s" % (profile))
 
     def on_connection(self):
         pass
+
 
 datastore = DataStore()
 

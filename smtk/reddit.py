@@ -6,6 +6,7 @@ logging.basicConfig(format='%(asctime)s %(name)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
+
 class CollectReddit:
 
     def __init__(self, stream=True):
@@ -60,10 +61,10 @@ class CollectReddit:
         if ids:
             id_submissions = [self.api.submission(id=id) for id in ids]
         if urls:
-            url_submissions = [self.api.submission( url=url) for url in urls]
+            url_submissions = [self.api.submission(url=url) for url in urls]
         submissions = id_submissions + url_submissions
         return submissions
-    
+
     def _fetch_redditors_by_name(self, names=None, stream=True):
         """Returns array of praw.models.Redditor"""
         if names:

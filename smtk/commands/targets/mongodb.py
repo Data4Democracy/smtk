@@ -14,22 +14,23 @@ from smtk.commands.cli import pass_context
 PARSING_ERROR = "Unable to parse:\n%s \nReason: %s"
 MISSING_KEY_ERROR = "Line is missing required key '%s':\n%s"
 
+
 def insert_lines(collection, lines):
 
     for line in lines:
         try:
             data = json.loads(line)
         except Exception as e:
-            raise Exception(PARSING_ERROR%(line, e))
+            raise Exception(PARSING_ERROR % (line, e))
 
         if 'type' not in data:
-            raise Exception(MISSING_KEY_ERROR%('type', line))
+            raise Exception(MISSING_KEY_ERROR % ('type', line))
 
         data_type = data['type']
 
         if data_type == 'RECORD':
             if 'stream' not in data:
-                raise Exception(MISSING_KEY_ERROR%('stream', line))
+                raise Exception(MISSING_KEY_ERROR % ('stream', line))
 
             record = data['record']
             collection.insert_one(record)
@@ -37,14 +38,14 @@ def insert_lines(collection, lines):
         else:
             l.WARN("""
                    Unexpected message type %s in message %s
-                   """ %(data['type'], data))
+                   """ % (data['type'], data))
 
 
 @click.command('mongodb', short_help="Write JSON data to mongodb")
 @click.option('--config')
 @pass_context
 def cli(ctx, config):
-    client = MongoClient('rs1deep.local', 27017)
+    client = MongoClient('localhost', 27017)
     db = client.twitter_connections
     collection = db.relationships
 

@@ -19,11 +19,13 @@ CSV_DEFAULT_CONFIG = {
     'quotechar': '"'
 }
 
+
 def is_file_empty(filename):
     return (
         (not os.path.isfile(filename)) or
         os.stat(filename).st_size == 0
     )
+
 
 def convert(lines, configuration):
     cfg_filename = str(configuration.get('output_file', ""))
@@ -34,21 +36,21 @@ def convert(lines, configuration):
         try:
             data = json.loads(line)
         except Exception as e:
-            raise Exception(PARSING_ERROR%(line, e))
+            raise Exception(PARSING_ERROR % (line, e))
 
         if 'type' not in data:
-            raise Exception(MISSING_KEY_ERROR%('type', line))
+            raise Exception(MISSING_KEY_ERROR % ('type', line))
 
         data_type = data['type']
 
         if data_type == 'RECORD':
             if 'stream' not in data:
-                raise Exception(MISSING_KEY_ERROR%('stream', line))
+                raise Exception(MISSING_KEY_ERROR % ('stream', line))
 
             filename = cfg_filename
             if filename == "":
                 filename = data['stream'] + '.csv'
-            print filename
+            print(filename)
             flattened_record = flatten(data['record'])
             header = flattened_record.keys()
 
@@ -61,14 +63,14 @@ def convert(lines, configuration):
 
                 if is_file_empty(filename):
                     writer.writeheader()
-                print flattened_record
+                print(flattened_record)
                 writer.writerow(flattened_record)
-
 
         else:
             l.WARN("""
                    Unexpected message type %s in message %s
-                   """ %(data['type'], data))
+                   """ % (data['type'], data))
+
 
 @click.command('csv', short_help="Writes JSON data to CSV")
 @click.option('--config')
@@ -79,9 +81,9 @@ def cli(ctx, config):
     try:
         with open(config, 'r') as config_file:
             csv_config = json.load(config_file)
-            l.INFO("Using custom CSV configuration: %s" %(csv_config))
+            l.INFO("Using custom CSV configuration: %s" % (csv_config))
     except TypeError:
-        l.WARN("Using default CSV configuration: %s" %(CSV_DEFAULT_CONFIG))
+        l.WARN("Using default CSV configuration: %s" % (CSV_DEFAULT_CONFIG))
 
     input_ = click.get_text_stream('stdin')
-    convert(input_, configuration = csv_config)
+    convert(input_, configuration=csv_config)

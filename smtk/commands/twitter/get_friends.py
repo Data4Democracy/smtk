@@ -7,6 +7,7 @@ import smtk.utils.logger as l
 from smtk.commands.cli import pass_context
 from smtk.twitter import CollectTwitter
 
+
 class GetFriendsLogger(CollectTwitter):
     @property
     def schema(self):
@@ -65,8 +66,7 @@ def cli(ctx, users, from_file, from_pipe):
             for line in stdin_text:
                 screen_names.append(line)
         except Exception as e:
-            raise RuntimeError("Error while reading pipe: %s" %(e))
+            raise RuntimeError("Error while reading pipe: %s" % (e))
 
-
-    l.INFO("Getting user relationship for users: %s" %(screen_names))
+    l.INFO("Getting user relationship for users: %s" % (screen_names))
     collector.get_friends(screen_names=screen_names)

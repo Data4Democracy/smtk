@@ -9,7 +9,7 @@ setup(
     description="Make social media collection & network mapping process as simple as possible for researchers.",
     url="https://github.com/Data4Democracy",
     platforms="Posix; MacOS X; Windows",
-    entry_points = {
+    entry_points={
         "console_scripts": ['smtk = smtk.main:main']
     },
     classifiers=[
