@@ -26,7 +26,7 @@ class GetFriendsLogger(CollectTwitter):
                             self.schema, ['account', 'connection'])
 
     def on_profile(self, profile):
-        print profile
+        print(profile)
 
     def on_connection(self, account, connection, type_):
         edge = {

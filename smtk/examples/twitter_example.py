@@ -14,7 +14,7 @@ class BaseCollector(CollectTwitter):
 
     def on_profile(self, profile):
         # db.send(profile)
-        print profile
+        print(profile)
 
     def on_connection(self):
         # db.send(connection)
@@ -48,4 +48,3 @@ collect = BaseCollector(CollectTwitter)
 
 tweet_logger = StdioTweetLogger()
 tweet_logger.get_tweets(screen_names=['POTUS', 'data4democracy'])
-
