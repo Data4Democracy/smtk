@@ -1,4 +1,4 @@
-from smtk.collect_twitter import CollectTwitter
+from smtk.twitter import CollectTwitter
 from smtk.utils.backend import DataStore
 
 import smtk.utils.logger as l

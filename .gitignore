@@ -103,3 +103,6 @@ db.sqlite
 data/*
 
 .idea/
+
+# SMTK
+configs/*.json

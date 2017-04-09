@@ -38,7 +38,18 @@ Platforms:
 
 Interesting in contributing? Please join us in #assemble and checkout our [contributors guide](./CONTRIBUTING.md) and join us in our slack channel [#assemble](https://datafordemocracy.slack.com/messages/assemble/)
 
-#### Code Examples  
+## Getting Started:
+
+### Installation:
+
+```
+> make install
+```
+
+### Examples  
+
+#### Using 4chan API
+
 ```python
 from smtk.fourchan import ChanMonitor
 
@@ -67,4 +78,10 @@ class DemoChan(ChanMonitor):
     print("Thread is no longer active")
 ```
 
-[Here](https://github.com/bstarling/fourchan_monitor) is an example of the chan monitor feeding our [Eventador](https://github.com/bstarling/assemble/tree/master/eventador) hosted kafka cluster.
+[Here](https://github.com/bstarling/fourchan_monitor) is an example of the chan monitor feeding our [Eventador](https://github.com/bstarling/assemble/tree/master/eventador) hosted kafka cluster .
+
+### Using SMTK for building quick data pipelines:
+
+```
+> cat tests/data/twitter_users.csv | python smtk.py twitter get_friends --from_pipe | python smtk.py target csv
+```

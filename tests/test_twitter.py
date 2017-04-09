@@ -1,5 +1,5 @@
 import unittest
-from smtk.collect_twitter import CollectTwitter
+from smtk.twitter import CollectTwitter
 
 
 class TestTwitter(unittest.TestCase):
