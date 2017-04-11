@@ -24,8 +24,7 @@ class CollectTwitter:
 
     def on_tweet(self, tweet):
         """ Called when tweet is found"""
-        # l.INFO("TWEET FOUND: {}".format(tweet.text))
-        pass
+        l.INFO("TWEET FOUND: {}".format(tweet.text))
 
     def on_profile(self, profile):
         """Called when profile is found"""
@@ -38,106 +37,95 @@ class CollectTwitter:
 
     def on_connection(self, account, connection, type_):
         """Called when connection is found"""
-        # l.INFO("{} found {} with {}".format(type_, account, connection))
-        pass
+        l.INFO("{} found {} with {}".format(type_, account, connection))
 
     def get_friends(self, ids=None, screen_names=None, request_limit=3):
         """In context of twitter friends are accounts the source is following"""
-        # https://github.com/Data4Democracy/collect-social/blob/master/collect_social/twitter/get_friends.py
-        if ids is None:
-            ids = []
+        if ids:
+            for id_ in ids:
+                self._stream_friends(user_id=id_, request_limit=request_limit)
+        if screen_names:
+            for screen_name in screen_names:
+                self._stream_friends(screen_name=screen_name, request_limit=request_limit)
 
-        if not screen_names is None:
-            ids += self._screen_names_to_ids(screen_names)
+    def get_followers(self, ids=None, screen_names=None, request_limit=3):
+        if ids:
+            for id_ in ids:
+                self._stream_followers(user_id=id_, request_limit=request_limit)
+        if screen_names:
+            for screen_name in screen_names:
+                self._stream_followers(
+                    screen_name=screen_name, request_limit=request_limit)
 
-        for id_ in ids:
-            self._stream_friends_by_id(id_, request_limit=3)
-
-    def get_followers(self, ids=None, screen_names=None, request_limit=3, on_conneciton=True):
-        # TODO on_connection? Param to return connections or always do it?
-        if ids is None:
-            ids = []
-
-        if not screen_names is None:
-            ids += self._screen_names_to_ids(screen_names)
-
-        for id_ in ids:
-            self._stream_followers_by_id(id_, request_limit=3)
-
-    def get_profiles(self, ids=None, stream=True):
-        # TODO profiles by screen_name
+    def get_profiles(self, ids=None, screen_names=None):
         # TODO Deal with timeouts
 
-        lookup = []
-        remain = len(ids)
-        profiles = []
-        for id_ in ids:
-            lookup.append(id_)
-            if len(lookup) >= 100:
-                # limit 100 profiles per request
-                chunk = self._fetch_users_by_id(ids=lookup, stream=stream)
-                remain -= len(lookup)
-                l.INFO("""
-                       Fetching {lookup} profiles. {remain} remain
-                       """.format(lookup, remain))
-                profiles += chunk
-        profiles += self._fetch_users_by_id(ids=lookup, stream=stream)
-        l.INFO("Fetching remaining %s profile(s)" % (len(lookup)))
+        if ids:
+            lookup = []
+            remain = len(ids)
+            for id_ in ids:
+                lookup.append(id_)
+                if len(lookup) >= 100:
+                    # limit 100 profiles per request
+                    self._stream_profiles(ids=lookup, by_id=True)
+                    remain -= len(lookup)
+                    l.INFO("Fetching {lookup} profiles. {remain} remain".format(
+                        lookup, remain))
+            l.INFO("Fetching remaining %s profile(s)" % (len(lookup)))
+            self._stream_profiles(lookup, by_id=True)
 
-        return profiles
+        if screen_names:
+            lookup = []
+            remain = len(screen_names)
+            for sn in screen_names:
+                lookup.append(sn)
+                if len(lookup) >= 100:
+                    # limit 100 profiles per request
+                    self._stream_profiles(lookup, by_id=False)
+                    remain -= len(lookup)
+                    l.INFO("Fetching {lookup} profiles. {remain} remain".format(
+                        lookup, remain))
+            l.INFO("Fetching remaining %s profile(s)" % (len(lookup)))
+            self._stream_profiles(lookup, by_id=False)
 
     def get_tweets(self, ids=None, screen_names=None, limit=3200):
-        if ids is None:
-            ids = []
+        if ids:
+            for id_ in ids:
+                l.INFO("Gathering tweets for user ID {}".format(id_))
+                self._stream_tweets(id_=id_, limit=limit)
+        if screen_names:
+            for screen_name in screen_names:
+                l.INFO("Gathering tweets for user {}".format(screen_name))
+                self._stream_tweets(screen_name=screen_name, limit=limit)
 
-        if not screen_names is None:
-            ids += self._screen_names_to_ids(screen_names)
+    def _stream_profiles(self, users, by_id=True):
+        if len(users) > 100:
+            raise RuntimeError(
+                "Too many users to fetch, got: %s" % (len(users)))
 
-        l.INFO("Getting tweets for ids: %s" % (ids))
-        for id_ in ids:
-            self._stream_tweets_by_user_id(id_, limit=limit)
+        if by_id:
+            profiles = self.api.UsersLookup(
+                user_id=users, include_entities=False)
+        else:
+            profiles = self.api.UsersLookup(
+                screen_name=users, include_entities=False)
 
-    def _fetch_users_by_id(self, ids=None, stream=True):
-        if len(ids) > 100:
-            raise RuntimeError("Too many users to fetch, got: %s" % (len(ids)))
+        for profile in profiles:
+            self.on_profile(profile)
 
-        profiles = self.api.UsersLookup(user_id=ids,
-                                        include_entities=False)
-        if stream:
-            for profile in profiles:
-                self.on_profile(profile)
-        return profiles
-
-    def _fetch_profiles_by_screen_name(self, screen_name):
-        return self.api.UsersLookup(screen_name=screen_name)
-
-    def _fetch_profiles_by_screen_names(self, screen_names):
-        return [
-            self.api.UsersLookup(screen_name=[screen_name])
-            for screen_name in screen_names
-        ]
-
-    def _screen_names_to_ids(self, screen_names):
-        ids = []
-        lookups = self._fetch_profiles_by_screen_names(screen_names)
-        for lookup in lookups:
-            for user in lookup:
-                ids.append(user.id)
-        return ids
-
-    def _stream_tweets_by_user_id(self, id_, **kwargs):
+    def _stream_tweets(self, user_id=None, screen_name=None, limit=3200):
         # TODO rework this to use min/max tweets instead of assuming < 200
         # means done
         kwargs = dict(
-            user_id=id_,
             count=200
         )
+        tweets_gathered = 0
 
-        # TODO consider breaking up/refactoring
         while True:
             try:
                 l.INFO("Fetching 200 tweets %s" % (kwargs))
                 tweets = self.api.GetUserTimeline(**kwargs)
+                tweets_gathered += len(tweets)
 
             except Exception as e:
                 l.WARN("%s kwargs %s" % (e, kwargs))
@@ -146,6 +134,10 @@ class CollectTwitter:
             l.INFO("Streaming tweets")
             for tweet in tweets:
                 self.on_tweet(tweet)
+
+            if tweets_gathered >= limit:
+                l.INFO("Per user limit hit {} tweets gathered".format(limit))
+                break
 
             if len(tweets) < 200:
                 # TODO Fix - Using <200 as proxy for end of user timeline
@@ -158,55 +150,49 @@ class CollectTwitter:
                 l.INFO("Setting max ID: {}".format(min(tweet_ids)))
                 kwargs['max_id'] = min(tweet_ids)
 
-    def _stream_tweets_by_screen_name(self, screen_name):
-        user = self._fetch_profiles_by_screen_name(screen_name=screen_name)
-        return self._stream_friends_by_id(self, user.id)
-
-    def _stream_friends_by_id(self, user_id, request_limit=3):
+    def _stream_friends(self, user_id=None, screen_name=None, request_limit=3):
         kwargs = dict(
-            user_id=user_id,
-            cursor=-1
-            #total_count=request_limit * 5000
-        )
-
-        l.INFO("Getting friends %s" % (kwargs))
-        friends = self.api.GetFriendIDs(**kwargs)
-        l.INFO("Streaming connections %s friends found" % (len(friends)))
-        for friend in friends:
-            self.on_connection(user_id, friend, type_=friend)
-        return friends
-
-    def _stream_friends_by_screen_name(self, screen_name, request_limit=3):
-        kwargs = dict(
-            screen_name=screen_name,
             cursor=-1,
             total_count=request_limit * 5000
         )
 
-        l.INFO("Getting friends %s" % (kwargs))
-        friends = self.api.GetFriendIDs(**kwargs)
-        l.INFO("Streaming connections %s friends found" % (len(friends)))
-        for friend in friends:
-            self.on_connection(user_id, friend, type_=friend)
-        return friends
+        if user_id:
+            kwargs['user_id'] = user_id
+        if screen_name:
+            kwargs['screen_name'] = screen_name
 
-    def _stream_followers_by_id(self, user_id, request_limit):
+            # User ID needed for connection object
+            user_id = self._fetch_profile_by_screen_name(screen_name=[screen_name])[0].id
+
+        l.INFO("Getting friends %s" % (kwargs))
+        followers = self.api.GetFriendIDs(**kwargs)
+        l.INFO("Streaming connections %s friends found" % (len(followers)))
+        for follower in followers:
+            self.on_connection(user_id, follower, type_='friend')
+
+    def _stream_followers(self, user_id=None, screen_name=None, request_limit=3):
         kwargs = dict(
-            user_id=user_id,
             cursor=-1,
             total_count=request_limit * 5000
         )
+        if user_id:
+            kwargs['user_id'] = user_id
+        if screen_name:
+            kwargs['screen_name'] = screen_name
 
-        l.INFO("Getting friends %s" % (kwargs))
+            # User ID needed for connection object
+            user_id = self._fetch_profile_by_screen_name(screen_name=[screen_name])[0].id
+
+        l.INFO("Getting followers %s" % (kwargs))
+
         followers = self.api.GetFollowerIDs(**kwargs)
         l.INFO("Streaming connections %s followers found" % (len(followers)))
         for follower in followers:
-            self.on_connection(user_id, follower, type_=follower)
-        return followers
+            self.on_connection(user_id, follower, type_='follower')
 
-    def _stream_followers_by_screen_name(self, screen_name):
-        user = self._fetch_profiles_by_screen_name(screen_name=screen_name)
-        return self._stream_followers_by_id(self, user.id)
+    def _fetch_profile_by_screen_name(self, screen_name):
+        profile = self.api.UsersLookup(screen_name=screen_name, include_entities=False)
+        return profile
 
 
 class StreamTwitter():
