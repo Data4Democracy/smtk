@@ -106,3 +106,4 @@ data/*
 
 # SMTK
 configs/*.json
+*.csv

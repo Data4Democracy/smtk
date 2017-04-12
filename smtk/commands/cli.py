@@ -40,7 +40,12 @@ class SMTKCommand(click.MultiCommand):
     def is_command(self, filename):
         is_py = filename.endswith('.py')
         is_init = filename == '__init__.py'
-        return is_py and not is_init
+        is_errors = filename == 'errors.py'
+        return (
+            is_py and
+            not is_init and
+            not is_errors
+        )
 
     def list_commands(self, ctx):
         rv = []
@@ -58,7 +63,7 @@ class SMTKCommand(click.MultiCommand):
             mod = __import__(module_str + '.' + name,
                              None, None, ['cli'])
         except ImportError as e:
-            raise RuntimeError("Could not import mode, reason: %s" % (e))
+            raise RuntimeError("Could not import commands, reason: %s" % (e))
         return mod.cli
 
 
@@ -72,3 +77,9 @@ class TwitterCommand(SMTKCommand):
     @property
     def sub_folder(self):
         return 'twitter'
+
+
+class GoogleCommand(SMTKCommand):
+    @property
+    def sub_folder(self):
+        return 'google'

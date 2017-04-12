@@ -6,12 +6,11 @@ import json
 import click
 
 import smtk.utils.logger as l
+import smtk.commands.targets.errors as errors
 
 from smtk.utils.csv import flatten
 from smtk.commands.cli import pass_context
 
-PARSING_ERROR = "Unable to parse:\n%s \nReason: %s"
-MISSING_KEY_ERROR = "Line is missing required key '%s':\n%s"
 
 CSV_DEFAULT_CONFIG = {
     'output_file': "",
@@ -36,21 +35,20 @@ def convert(lines, configuration):
         try:
             data = json.loads(line)
         except Exception as e:
-            raise Exception(PARSING_ERROR % (line, e))
+            raise Exception(errors.PARSING_ERROR % (line, e))
 
         if 'type' not in data:
-            raise Exception(MISSING_KEY_ERROR % ('type', line))
+            raise Exception(errors.MISSING_KEY_ERROR % ('type', line))
 
         data_type = data['type']
 
         if data_type == 'RECORD':
             if 'stream' not in data:
-                raise Exception(MISSING_KEY_ERROR % ('stream', line))
+                raise Exception(errors.MISSING_KEY_ERROR % ('stream', line))
 
             filename = cfg_filename
             if filename == "":
                 filename = data['stream'] + '.csv'
-            print(filename)
             flattened_record = flatten(data['record'])
             header = flattened_record.keys()
 
@@ -63,13 +61,10 @@ def convert(lines, configuration):
 
                 if is_file_empty(filename):
                     writer.writeheader()
-                print(flattened_record)
                 writer.writerow(flattened_record)
 
         else:
-            l.WARN("""
-                   Unexpected message type %s in message %s
-                   """ % (data['type'], data))
+            l.WARN(errors.UNEXPECTED_MESSAGE_TYPE % (data['type'], data))
 
 
 @click.command('csv', short_help="Writes JSON data to CSV")

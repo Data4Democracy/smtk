@@ -20,3 +20,7 @@ pymongo = "*"
 click-completion = "*"
 better_exceptions = "*"
 BASC-py4chan = "*"
+beautifulsoup4 = "*"
+selenium = "*"
+boto = "*"
+luigi = pinax = { git = 'git://github.com/spotify/luigi.git', editable = true }

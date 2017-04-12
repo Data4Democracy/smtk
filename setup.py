@@ -23,7 +23,8 @@ setup(
         "smtk.utils",
         "smtk.examples",
         "smtk.commands",
-        "smtk.commands.twitter"
+        "smtk.commands.twitter",
+        "smtk.commands.google"
     ],
     install_requires=[
         'python-twitter',
@@ -37,6 +38,12 @@ setup(
         'pymongo',
         'click-completion',
         'better_exceptions',
-        'BASC-py4chan'
+        'BASC-py4chan',
+        'beautifulsoup4',
+        'selenium',
+        'boto'
+    ],
+    dependency_links = [
+        'git+https://git@github.com/spotify/luigi.git'
     ]
 )
